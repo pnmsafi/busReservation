@@ -24,7 +24,7 @@ void cancel(int x);
 BST *reservationInfo(BST *, int, int *); // Display Reservation Info
 BST *insert(BST **r, int custID);
 
-int busSeat[33][9] = {0};
+int busSeat[32][9] = {0};
 void redColor() /// Print the message in redcolor
 {
   printf("\033[1;31m");
@@ -35,18 +35,18 @@ void resetColor() /// reset the old color of console
 }
 BST *reservationInfo(BST *r, int custId, int *custIDmatched) // find function
 {
-
+  if(r==NULL)return NULL;
   BST *presentnode = r;
-  if ((presentnode) != NULL)
+  while (presentnode)
   {
     // --------------------
 
-    if ((presentnode->PassnNo == custId))
+    if (presentnode->PassnNo == custId)
     {
       *custIDmatched = 1;
       redColor();
       printf("\n-----------------------------------------------------------------");
-      printf("\n||              NAME: %s                                    ||", (presentnode->name));
+      printf("\n||              NAME: %s                               ||", (presentnode->name));
       printf("\n||              CUSTOMER ID: %d                              ||", presentnode->PassnNo);
       printf("\n||              BUS NUMBER: %d                                  ||", (presentnode->PassnNo) / 1000);
       printf("\n||              SEAT NUMBER: %d                                 ||", (presentnode->PassnNo) % 100);
@@ -55,14 +55,8 @@ BST *reservationInfo(BST *r, int custId, int *custIDmatched) // find function
       resetColor();
       return r;
     }
-    else if (presentnode->PassnNo < custId)
-    {
-      reservationInfo((presentnode->left), custId, custIDmatched);
-    }
-    else if (presentnode->PassnNo > custId)
-    {
-      reservationInfo((presentnode->right), custId, custIDmatched);
-    }
+    else if (presentnode->PassnNo > custId) presentnode=presentnode->left;
+    else presentnode=presentnode->right;
   }
 
   return NULL;
@@ -88,11 +82,11 @@ BST *insert(BST **r, int custId)
   }
   else
   {
-    if ((*r)->PassnNo < custId)
+    if ((*r)->PassnNo > custId)
     {
       (*r)->left = insert(&((*r)->left), custId);
     }
-    else if ((*r)->PassnNo > custId)
+    else if ((*r)->PassnNo < custId)
     {
       (*r)->right = insert(&((*r)->right), custId);
     }
@@ -100,20 +94,12 @@ BST *insert(BST **r, int custId)
   return *r;
 }
 
-void DisplaySeat(int bus[33])
+void DisplaySeat(int bus[32])
 {
   for (int i = 1; i <= 32; i++)
   {
     redColor();
-    if (i < 10 && i > 0)
-    {
-      printf("0%d .", i);
-    }
-    else
-    {
-      printf("%d .", i);
-    }
-
+    printf("%02d. ",i);
     resetColor();
     {
       if (bus[i] == 0)
@@ -128,7 +114,7 @@ void DisplaySeat(int bus[33])
 }
 void login()
 {
-  char userName[20] = "user";
+  char userName[10] = "user";
   char passWord[10] = "team18";
   char matchPass[10];
   char matchUser[10];
@@ -138,14 +124,14 @@ void login()
   printf("\n\t\t\tWELCOME TO ONLINE BUS RESERVATION");
   printf("\n\n=========================================================================================\n\n");
   resetColor();
-login:
-{
-  printf("\n\nUserName: ");
-  gets(matchUser);
+  login:
+  {
+    printf("\n\nUserName: ");
+    gets(matchUser);
 
-  printf("\nPassWord: ");
-  gets(matchPass);
-}
+    printf("\nPassWord: ");
+    gets(matchPass);
+  }
 
   value = strcmp(passWord, matchPass); /// string compare is function defined in headerfile i.e string.h
   if (value != 0)
@@ -212,8 +198,8 @@ void busLists()
   printf("\n5\tSai Baba Travels     \tMaitidevi To Janakpur \tRs.55    \t\t12:05  AM");
   printf("\n6\tShine On Travels     \tMadhubani to Patna    \tRs.40    \t\t09:30  AM");
   printf("\n7\tMayur Travels        \tPatna To Gaya         \tRs.70   \t\t11:00  PM");
-  printf("\n8\tShree Travels        \tGaya To Chhapra       \tRs.40    \t\t04:00  PM");
-  printf("\n9\tRajjo Travels       \tBegusarai To Patna     \tRs.55    \t\t08:15  AM");
+  printf("\n8\tShree Travels        \tGaya To Chhapra       \tRs.55    \t\t04:00  PM");
+  printf("\n9\tRajjo Travels       \tBegusarai To Patna     \tRs.40    \t\t08:15  AM");
   printf("\n");
   getch();
 }
@@ -225,45 +211,45 @@ void cancel(int randomNum)
   char c;
   int seatCancel;
 
-aa:
-{
-  printf("\nENTER YOUR RESERVATION NUMBER : ");
-  scanf("%d", &reservationNo);
-  if (reservationNo == randomNum)
+  aa:
   {
-    printf("\nRESERVATION NUMBER IS IT CORRECT ? %d \nENTER (Y/N) : ", reservationNo);
-    scanf("%s", &c);
-    if (c == 'y' || c == 'Y')
+    printf("\nENTER YOUR RESERVATION NUMBER : ");
+    scanf("%d", &reservationNo);
+    if (reservationNo == randomNum)
     {
-      printf("\n\n============================================\n\n");
-      printf("   ENTER THE BUS NUMBER: ");
-      scanf("%d", &choice);
-
-      printf("\nHOW MANY SEATS DO WANT TO CANCEL : ");
-      scanf("%d", &seatCancel);
-      for (int i = 0; i < seatCancel; i++)
+      printf("\nRESERVATION NUMBER IS IT CORRECT ? %d \nENTER (Y/N) : ", reservationNo);
+      scanf("%s", &c);
+      if (c == 'y' || c == 'Y')
       {
-        printf("   \nENTER THE SEAT NUMBER: ");
-        scanf("%d", &seatNumber);
+        printf("\n\n============================================\n\n");
+        printf("   ENTER THE BUS NUMBER: ");
+        scanf("%d", &choice);
 
-        busSeat[choice][seatNumber] = 0;
+        printf("\nHOW MANY SEATS DO WANT TO CANCEL : ");
+        scanf("%d", &seatCancel);
+        for (int i = 0; i < seatCancel; i++)
+        {
+          printf("   \nENTER THE SEAT NUMBER: ");
+          scanf("%d", &seatNumber);
+
+          busSeat[choice][seatNumber] = 0;
+        }
+        printf("\n\nYOUR RESERVATION HAS BEEN CANCEL !!\n\n");
+        getch();
+        DisplaySeat(busSeat[choice]);
       }
-      printf("\n\nYOUR RESERVATION HAS BEEN CANCEL !!\n\n");
-      getch();
-      DisplaySeat(busSeat[choice]);
-    }
 
-    else if (c == 'n' || c == 'N')
+      else if (c == 'n' || c == 'N')
+      {
+        printf("\nYOUR RESERVATION CANCELATION HAS BEEN DENIED\n");
+      }
+    }
+    else
     {
-      printf("\nYOUR RESERVATION CANCELATION HAS BEEN DENIED\n");
+      printf("\nNOT FOUND!! ENTER THE CORRECT RESERVATION NUMBER\n");
+      goto aa;
     }
   }
-  else
-  {
-    printf("\nNOT FOUND!! ENTER THE CORRECT RESERVATION NUMBER\n");
-    goto aa;
-  }
-}
 }
 
 int main()
@@ -273,144 +259,148 @@ int main()
   int num, i, custID, reservationNo;
   BST *root1;
   login();
-main:
-{
-  do
+  main:
   {
-    printf("\n\n====================================================================\n\n");
-    printf("\t\t\t\033[1;31mBUS RESERVATION\033[0m\t\t");
-    printf("\n\n=====================================================================\n");
-    printf("\n====================");
-    redColor();
-    printf("  MAIN MENU ");
-    resetColor();
-    printf("=====================\n\n");
-    printf("   \033[1;31m[1]\033[0m VIEW BUS LIST \n\n");
-    printf("   \033[1;31m[2]\033[0m BOOK TICKETS\n\n");
-    printf("   \033[1;31m[3]\033[0m CANCEL BOOKING\n\n");
-    printf("   \033[1;31m[4]\033[0m BUSES SEATS INFO\n\n");
-    printf("   \033[1;31m[5]\033[0m RESERVATION INFO\n\n");
-    printf("   \033[1;31m[6]\033[0m EXIT\n");
-    printf("\n=====================================================\n");
-    printf("\n   ENTER YOUR CHOICE: ");
-    scanf("%d", &num);
-    switch (num)
+    do
     {
-    case 1:
-      busLists(); // for list of bus
-      break;
-    case 2:
-      busLists(); // for booking the tickets
-
-      int CustId, choice, seats;
-
-    busChoice:
-      printf("\n\nCHOOSE YOUR BUS  : ");
-      scanf("%d", &choice);
-      if (choice <= 0 || choice > 9)
+      printf("\n\n====================================================================\n\n");
+      printf("\t\t\t\033[1;31mBUS RESERVATION\033[0m\t\t");
+      printf("\n\n=====================================================================\n");
+      printf("\n====================");
+      redColor();
+      printf("  MAIN MENU ");
+      resetColor();
+      printf("=====================\n\n");
+      printf("   \033[1;31m[1]\033[0m VIEW BUS LIST \n\n");
+      printf("   \033[1;31m[2]\033[0m BOOK TICKETS\n\n");
+      printf("   \033[1;31m[3]\033[0m CANCEL BOOKING\n\n");
+      printf("   \033[1;31m[4]\033[0m BUSES SEATS INFO\n\n");
+      printf("   \033[1;31m[5]\033[0m RESERVATION INFO\n\n");
+      printf("   \033[1;31m[6]\033[0m EXIT\n");
+      printf("\n=====================================================\n");
+      printf("\n   ENTER YOUR CHOICE: ");
+      scanf("%d", &num);
+      switch (num)
       {
+      case 1:
+        busLists(); // for list of bus
+        break;
+      case 2:
+        busLists(); // for booking the tickets
+
+        int CustId, choice, seats;
+
+      busChoice:
+        printf("\n\nCHOOSE YOUR BUS  : ");
+        scanf("%d", &choice);
+        if (choice <= 0 || choice > 9)
+        {
+          redColor();
+          printf("\nENTER VALID BUS NUMBER !! \n");
+          resetColor();
+          getch();
+          goto busChoice;
+        }
+        printf("\n");
+        DisplaySeat(busSeat[choice]);
+      busSeatChoice:
+        printf("\n\nNO. OF SEATS YOU NEED TO BOOK : ");
+        scanf("%d", &seats);
+        if (seats <= 0)
+        {
+          redColor();
+          printf("\nENTER VALID SEAT NUMBER!!\n");
+          resetColor();
+          goto busSeatChoice;
+        }
+        else if (seats > 32)
+        {
+          redColor();
+          printf("\nENTER VALID SEAT NUMBER WE HAVE ONLY 32 SEATS IN A BUS !!\n");
+          resetColor();
+          goto busSeatChoice;
+        }
+        int seatNumber;
+        for (int i = 1; i <= seats; i++)
+        {
+          printf("\n\n==================================================================================\n\n");
+        seat:
+          printf("   ENTER THE SEAT NUMBER: ");
+          scanf("%d", &seatNumber);
+          if (seatNumber <= 0)
+          {
+            redColor();
+            printf("\n   ENTER VALID SEAT NUMBER!!\n\n");
+            resetColor();
+            goto seat;
+          }
+          else if (seatNumber > 32)
+          {
+            redColor();
+            printf("\n   ENTER VALID SEAT NUMBER WE HAVE ONLY 32 SEATS IN A BUS !!\n\n");
+            resetColor();
+            goto seat;
+          }
+          CustId = choice * 1000 + seatNumber; // CustumerId choice=busNO; busNo0seatNO
+          busSeat[choice][seatNumber] = 1;
+          root = insert(&root, CustId);
+          redColor();
+          printf("\n   YOUR CUSTOMER ID IS : %d", CustId);
+          resetColor();
+          printf("\n\n==================================================================================\n\n");
+        }
+        printf("\nYOUR RESERVATION NUMBER IS : ");
         redColor();
-        printf("\nENTER VALID BUS NUMBER !! \n");
+        printf("%d\n", randomNum);
+        printf("\nPLEASE NOTE DOWN YOUR RESERVATION NUMBER FOR CANCEL BOOKING TICKETS!!\n");
         resetColor();
         getch();
-        goto busChoice;
-      }
-      printf("\n");
-      DisplaySeat(busSeat[choice]);
-    busSeatChoice:
-      printf("\n\nNO. OF SEATS YOU NEED TO BOOK : ");
-      scanf("%d", &seats);
-      if (seats <= 0)
-      {
-        redColor();
-        printf("\nENTER VALID SEAT NUMBER!!\n");
-        resetColor();
-        goto busSeatChoice;
-      }
-      else if (seats > 32)
-      {
-        redColor();
-        printf("\nENTER VALID SEAT NUMBER WE HAVE ONLY 32 SEATS IN A BUS !!\n");
-        resetColor();
-        goto busSeatChoice;
-      }
-      int seatNumber;
-      for (int i = 1; i <= seats; i++)
-      {
-        printf("\n\n==================================================================================\n\n");
-      seat:
-        printf("   ENTER THE SEAT NUMBER: ");
-        scanf("%d", &seatNumber);
-        if (seatNumber <= 0)
-        {
-          redColor();
-          printf("\n   ENTER VALID SEAT NUMBER!!\n\n");
-          resetColor();
-          goto seat;
-        }
-        else if (seatNumber > 32)
-        {
-          redColor();
-          printf("\n   ENTER VALID SEAT NUMBER WE HAVE ONLY 32 SEATS IN A BUS !!\n\n");
-          resetColor();
-          goto seat;
-        }
-        CustId = choice * 1000 + seatNumber; // CustumerId
-        busSeat[choice][seatNumber] = 1;
-        root = insert(&root, CustId);
-        redColor();
-        printf("\n   YOUR CUSTOMER ID IS : %d", CustId);
-        resetColor();
-        printf("\n\n==================================================================================\n\n");
-      }
-      printf("\nYOUR RESERVATION NUMBER IS : ");
-      redColor();
-      printf("%d\n", randomNum);
-      printf("\nPLEASE NOTE DOWN YOUR RESERVATION NUMBER FOR CANCEL BOOKING TICKETS!!\n");
-      resetColor();
-      getch();
-      break;
-    case 3:
-      cancel(randomNum);
-      break;
-    case 4:
-      status(randomNum);
-      break;
-    case 5:
-    takingReservationNo:
-      printf("\n   ENTER YOUR RESERVATION NUMBER :");
-      scanf("%d", &reservationNo);
+        break;
+      case 3:
+        cancel(randomNum);
+        break;
+      case 4:
+        status(randomNum);
+        break;
+      case 5:
+      takingReservationNo:
+        printf("\n   ENTER YOUR RESERVATION NUMBER :");
+        scanf("%d", &reservationNo);
 
-      if (randomNum == reservationNo)
-      {
-      cust:
-        printf("\n   ENTER YOUR CUSTOMER ID :");
-        scanf("%d", &custID);
-        int custIDmatched = 0;
-        root1 = reservationInfo(root, custID, &custIDmatched);
-        if (custIDmatched == 0)
+        if (randomNum == reservationNo)
+        {
+        cust:
+          printf("\n   ENTER YOUR CUSTOMER ID :");
+          scanf("%d", &custID);
+          int custIDmatched = 0;
+          root1 = reservationInfo(root, custID, &custIDmatched);
+          if (custIDmatched == 0)
+          {
+            redColor();
+            printf("\n   ENTER CORRECT CUSTOMER ID!!\n");
+            resetColor();
+            goto cust;
+          }
+        }
+        else
         {
           redColor();
-          printf("\n   ENTER CORRECT CUSTOMER ID!!\n");
+          printf("\n INVALID RESERVATION NUMBER PLEASE ENTER CORRECT RESERVATION NUMBER !!\n");
           resetColor();
-          goto cust;
+          goto takingReservationNo;
         }
+        break;
       }
-      else
-      {
-        redColor();
-        printf("\n INVALID RESERVATION NUMBER PLEASE ENTER CORRECT RESERVATION NUMBER !!\n");
+      Default :
+      redColor();
+        printf("\n  INVALID INPUT!!!!PLEASE TRY AGAIN............");
         resetColor();
-        goto takingReservationNo;
-      }
-      break;
-    }
-  } while (num != 6);
-  printf("\n\n=====================================================================\n\n");
-  printf("THANK YOU FOR USING THIS BUS RESERVATION SYSTEM");
-  printf("\n\nPRESS ANY KEY TO EXIT THE END PROGRAM !! \n");
-  printf("\n\n");
-  getch();
-  return 0;
-}
+    } while (num != 6);
+    printf("\n\n=====================================================================\n\n");
+    printf("THANK YOU FOR USING THIS BUS RESERVATION SYSTEM");
+    printf("\n\nPRESS ANY KEY TO EXIT THE END PROGRAM !! \n");
+    printf("\n\n");
+    getch();
+    return 0;
+  }
 }
