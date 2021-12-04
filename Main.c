@@ -12,7 +12,9 @@ struct BinarySearchTree
   struct BinarySearchTree *left;
   struct BinarySearchTree *right;
 };
-char busName[10][30] = {"GangaTravels ", "Phaphara Travels ", "Shiv Ganga Travels", "Super Deluxe", "Sai Baba Travels", "Shine On Travels", "Mayur Travels", "Shree Travels", "Rajjo Travels"};
+// char busName[10][30] = {"GangaTravels ", "Phaphara Travels ", "Shiv Ganga Travels", "Super Deluxe", "Sai Baba Travels", "Shine On Travels", "Mayur Travels", "Shree Travels", "Rajjo Travels"};
+
+
 BST *root = NULL;
 int cost(BST *r);              // calculates costs
 void status();                 // shows bus and seats status
@@ -31,7 +33,7 @@ void resetColor() /// reset the old color of console
 {
   printf("\033[0m");
 }
-BST *reservationInfo(BST *r, int s, int *custIDmatched) // find function
+BST *reservationInfo(BST *r, int custId, int *custIDmatched) // find function
 {
 
   BST *presentnode = r;
@@ -39,7 +41,7 @@ BST *reservationInfo(BST *r, int s, int *custIDmatched) // find function
   {
     // --------------------
 
-    if ((presentnode->PassnNo == s))
+    if ((presentnode->PassnNo == custId))
     {
       *custIDmatched = 1;
       redColor();
@@ -53,13 +55,13 @@ BST *reservationInfo(BST *r, int s, int *custIDmatched) // find function
       resetColor();
       return r;
     }
-    else if (presentnode->PassnNo < s)
+    else if (presentnode->PassnNo < custId)
     {
-      reservationInfo((presentnode->left), s, custIDmatched);
+      reservationInfo((presentnode->left), custId, custIDmatched);
     }
-    else if (presentnode->PassnNo > s)
+    else if (presentnode->PassnNo > custId)
     {
-      reservationInfo((presentnode->right), s, custIDmatched);
+      reservationInfo((presentnode->right), custId, custIDmatched);
     }
   }
 
